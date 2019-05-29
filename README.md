@@ -1,2 +1,4 @@
 # Score board
-A Score Board Using Arduino
+A Score Board Using Arduino  
+
+Schematic Diagram and Pictures Coming Soon
