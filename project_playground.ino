@@ -124,29 +124,17 @@ void loop()
 	if (digitalRead(buttonA) == HIGH)
 	{
 		charA++;
-		// if (charA > 9)
-		// {
-		// 	charA = 0;
-		// }
 		if (charA > 10)
 		{
 			charA = 0;
 		}
-		if (charA == 10)
-		{
-			write_off_to_segment('a');
-			delay(delayy_btn);
-		}
-		else
-		{
-			write_num_to_segment('a', charA);
-			delay(delayy_btn);
-		}
+		write_num_to_segment('a', charA);
+		delay(delayy_btn);
 	}
 	if (digitalRead(buttonB) == HIGH)
 	{
 		charB++;
-		if (charB > 9)
+		if (charB > 10)
 		{
 			charB = 0;
 		}
@@ -156,7 +144,7 @@ void loop()
 	if (digitalRead(buttonC) == HIGH)
 	{
 		charC++;
-		if (charC > 9)
+		if (charC > 10)
 		{
 			charC = 0;
 		}
@@ -166,7 +154,7 @@ void loop()
 	if (digitalRead(buttonD) == HIGH)
 	{
 		charD++;
-		if (charD > 9)
+		if (charD > 10)
 		{
 			charD = 0;
 		}
@@ -192,12 +180,6 @@ void write_num_to_segment(char segment, int digit)
 {
 	display_segment(segment);
 	display_digit(digit);
-}
-
-void write_off_to_segment(char segment)
-{
-	display_segment(segment);
-	digitoff();
 }
 
 void display_segment(char segment)
@@ -264,6 +246,9 @@ void display_digit(int digit)
 		break;
 	case 9:
 		digit9();
+		break;
+	case 10:
+		digitoff();
 		break;
 	}
 }
