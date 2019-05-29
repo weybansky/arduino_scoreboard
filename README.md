@@ -1,2 +1,2 @@
-# arduino_scoreboard
+# Score board
 A Score Board Using Arduino
