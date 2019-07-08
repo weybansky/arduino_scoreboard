@@ -1,6 +1,5 @@
 #include <IRremote.h>
 
-// int RECV_PIN = 10;
 int RECV_PIN = A0;
 IRrecv irrecv(RECV_PIN);
 decode_results results;
@@ -19,8 +18,8 @@ const int common2 = A2;
 const int common3 = A3;
 const int common4 = A4;
 
-const int delayy = 6;
-const int delayy_btn = 450;
+//const int delayy = 6;
+//const int delayy_btn = 450;
 
 String number_to_be_displayed = "0000";
 String charOne, charTwo, charThree, charFour;
@@ -78,43 +77,43 @@ void loop()
 		{
 		case 0xFF30CF:
 			charA++;
-			if (charA > 9)
+			if (charA > 10)
 			{
 				charA = 0;
 			}
 			write_num_to_segment('a', charA);
-			delay(delayy_btn);
 			Serial.println("ADD TO A");
+      delay(delayy_btn);
 			break;
 		case 0xFF18E7:
 			charB++;
-			if (charB > 9)
+			if (charB > 10)
 			{
 				charB = 0;
 			}
 			write_num_to_segment('b', charB);
-			delay(delayy_btn);
 			Serial.println("ADD TO B");
+      delay(delayy_btn);
 			break;
 		case 0xFF7A85:
 			charC++;
-			if (charC > 9)
+			if (charC > 10)
 			{
 				charC = 0;
 			}
 			write_num_to_segment('c', charC);
-			delay(delayy_btn);
 			Serial.println("ADD TO C");
+      delay(delayy_btn);
 			break;
 		case 0xFF10EF:
 			charD++;
-			if (charD > 9)
+			if (charD > 10)
 			{
 				charD = 0;
 			}
 			write_num_to_segment('d', charD);
-			delay(delayy_btn);
 			Serial.println("ADD TO D");
+      delay(delayy_btn);
 			break;
 		}
 		digitalWrite(13, LOW); //indicate remote press
