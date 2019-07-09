@@ -18,8 +18,8 @@ const int common2 = A2;
 const int common3 = A3;
 const int common4 = A4;
 
-//const int delayy = 6;
-//const int delayy_btn = 450;
+const int delayy = 6;
+const int delayy_btn = 450;
 
 String number_to_be_displayed = "0000";
 String charOne, charTwo, charThree, charFour;
