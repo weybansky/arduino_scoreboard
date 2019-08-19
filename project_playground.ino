@@ -1,5 +1,7 @@
 #include <IRremote.h>
 
+#include <PinChangeInt.h>
+
 int RECV_PIN = A0;
 IRrecv irrecv(RECV_PIN);
 decode_results results;
@@ -18,17 +20,17 @@ const int common2 = A2;
 const int common3 = A3;
 const int common4 = A4;
 
-const int delayy = 6;
-const int delayy_btn = 450;
+const int delayy = 5;
+// const int delayy_btn = 450;
 
 String number_to_be_displayed = "0000";
 String charOne, charTwo, charThree, charFour;
-int charA, charB, charC, charD;
+volatile int charA, charB, charC, charD;
 
-int buttonA = A5;
-int buttonB = 2;
-int buttonC = 3;
-int buttonD = 4;
+#define buttonA A5
+#define buttonB 2
+#define buttonC 3
+#define buttonD 4
 
 void setup()
 {
@@ -54,12 +56,20 @@ void setup()
 	charC = charThree.toInt();
 	charD = charFour.toInt();
 
-	pinMode(buttonA, INPUT);
-	pinMode(buttonB, INPUT);
-	pinMode(buttonC, INPUT);
-	pinMode(buttonD, INPUT);
+	pinMode(buttonA, INPUT_PULLUP);
+	attachPinChangeInterrupt(buttonA, button_press, RISING); // library
 
-	Serial.begin(9600);
+	// interrupts();
+	pinMode(buttonB, INPUT_PULLUP);
+	attachInterrupt(digitalPinToInterrupt(buttonB), button_press, RISING);
+
+	pinMode(buttonC, INPUT_PULLUP);
+	attachInterrupt(digitalPinToInterrupt(buttonC), button_press, RISING);
+
+	pinMode(buttonD, INPUT_PULLUP);
+	attachPinChangeInterrupt(buttonD, button_press, RISING); //library
+
+	Serial.begin(115200);
 	// In case the interrupt driver crashes on setup, give a clue
 	// to the user what's going on.
 	Serial.println("Enabling IRin");
@@ -68,6 +78,74 @@ void setup()
 }
 
 void loop()
+{
+	noInterrupts();
+	remote_press();
+	// button_press();
+	interrupts();
+	write_num_to_segment('a', charA);
+	delay(delayy);
+	write_num_to_segment('b', charB);
+	delay(delayy);
+	write_num_to_segment('c', charC);
+	delay(delayy);
+	write_num_to_segment('d', charD);
+	delay(delayy);
+	Serial.print(charA);
+	Serial.print(charB);
+	Serial.print(charC);
+	Serial.println(charD);
+}
+
+void button_press_B()
+{
+	// if (digitalRead(buttonB) == HIGH)
+	// {
+		charB++;
+		if (charB > 10)
+		{
+			charB = 0;
+		}
+	// }
+}
+
+void button_press()
+{
+	if (digitalRead(buttonA) == HIGH)
+	{
+		charA++;
+		if (charA > 10)
+		{
+			charA = 0;
+		}
+	}
+	if (digitalRead(buttonB) == HIGH)
+	{
+		charB++;
+		if (charB > 10)
+		{
+			charB = 0;
+		}
+	}
+	if (digitalRead(buttonC) == HIGH)
+	{
+		charC++;
+		if (charC > 10)
+		{
+			charC = 0;
+		}
+	}
+	if (digitalRead(buttonD) == HIGH)
+	{
+		charD++;
+		if (charD > 10)
+		{
+			charD = 0;
+		}
+	}
+}
+
+void remote_press()
 {
 	if (irrecv.decode(&results))
 	{
@@ -81,9 +159,7 @@ void loop()
 			{
 				charA = 0;
 			}
-			write_num_to_segment('a', charA);
 			Serial.println("ADD TO A");
-      delay(delayy_btn);
 			break;
 		case 0xFF18E7:
 			charB++;
@@ -91,9 +167,7 @@ void loop()
 			{
 				charB = 0;
 			}
-			write_num_to_segment('b', charB);
 			Serial.println("ADD TO B");
-      delay(delayy_btn);
 			break;
 		case 0xFF7A85:
 			charC++;
@@ -101,9 +175,7 @@ void loop()
 			{
 				charC = 0;
 			}
-			write_num_to_segment('c', charC);
 			Serial.println("ADD TO C");
-      delay(delayy_btn);
 			break;
 		case 0xFF10EF:
 			charD++;
@@ -111,68 +183,12 @@ void loop()
 			{
 				charD = 0;
 			}
-			write_num_to_segment('d', charD);
 			Serial.println("ADD TO D");
-      delay(delayy_btn);
 			break;
 		}
 		digitalWrite(13, LOW); //indicate remote press
 		irrecv.resume();	   // Receive the next value
 	}
-
-	if (digitalRead(buttonA) == HIGH)
-	{
-		charA++;
-		if (charA > 10)
-		{
-			charA = 0;
-		}
-		write_num_to_segment('a', charA);
-		delay(delayy_btn);
-	}
-	if (digitalRead(buttonB) == HIGH)
-	{
-		charB++;
-		if (charB > 10)
-		{
-			charB = 0;
-		}
-		write_num_to_segment('b', charB);
-		delay(delayy_btn);
-	}
-	if (digitalRead(buttonC) == HIGH)
-	{
-		charC++;
-		if (charC > 10)
-		{
-			charC = 0;
-		}
-		write_num_to_segment('c', charC);
-		delay(delayy_btn);
-	}
-	if (digitalRead(buttonD) == HIGH)
-	{
-		charD++;
-		if (charD > 10)
-		{
-			charD = 0;
-		}
-		write_num_to_segment('d', charD);
-		delay(delayy_btn);
-	}
-
-	write_num_to_segment('a', charA);
-	delay(delayy);
-	write_num_to_segment('b', charB);
-	delay(delayy);
-	write_num_to_segment('c', charC);
-	delay(delayy);
-	write_num_to_segment('d', charD);
-	delay(delayy);
-	Serial.print(charA);
-	Serial.print(charB);
-	Serial.print(charC);
-	Serial.println(charD);
 }
 
 void write_num_to_segment(char segment, int digit)
